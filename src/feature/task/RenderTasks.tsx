@@ -8,6 +8,7 @@ const RenderTasks = () => {
 
     const [isUpdating, setUpdating] = useState(false)
     const [isDeleting, setDeleting] = useState(false)
+    const [task,setTask]=useState<Task>({title:"",description:""})
 
 
     const handleDelete = async(id:string) => {
@@ -22,7 +23,7 @@ const RenderTasks = () => {
     const handleUpdate = async(id:string) => {
         try {
             setUpdating(true)
-            await updateTask(id)
+            await updateTask(id,task)
         } finally {
             setUpdating(false)
         }
@@ -42,6 +43,9 @@ const RenderTasks = () => {
 
     return (
         <div className='space-y-4'>
+            {
+                tasks.length==0 && <p className='text-center font-semibold'>No tasks available</p>
+            }
             {
                 tasks.map((t, index) => (
                     <div key={index} className='bg-gray-50 px-4 py-2 rounded hover:bg-gray-100 transition-colors space-y-5'>
