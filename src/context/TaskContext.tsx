@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useReducer, useState, type Dispatch, type ReactNode } from "react";
+import React, { createContext, useContext, useEffect, useReducer, useState, type Dispatch, type ReactNode } from "react";
 import type { Task } from "../feature/task/type";
 import apiHelper from "../utils/apiHelper";
+
 
 interface TaskContextValue{
 createTask:(task:Task)=>Promise<void>|void
@@ -9,17 +10,27 @@ deleteTask:(id:string)=>Promise<void>|void
 getTasks:()=>Promise<void>|void
 updateTask:(id:string,task:Task)=>Promise<void>|void
 isOpened:boolean
+filteredTasks:Task[]
+setFilteredTasks:(tasks:Task[])=>void
 setOpened:(val:boolean)=>void
 }
 
 const TaskContext = createContext<TaskContextValue|null>(null)
 
+
+
+
 const TaskContextProvider = ({ children }: { children: ReactNode }) => {
     const[tasks,setTasks]=useState<Task[]>([])
     const[isOpened,setOpened]=useState(false)
+    const[filteredTasks,setFilteredTasks]=useState<Task[]>([])
+
+ 
+
+ 
   
 
-    const url = import.meta.env.SERVER_URL
+    const url = import.meta.env.VITE_SERVER_URL
     const createTask = async (task:Task) => {
         try {
             await apiHelper(`${url}/create_task/`, {
@@ -44,9 +55,10 @@ const TaskContextProvider = ({ children }: { children: ReactNode }) => {
     }
     const getTasks=async()=>{
         try {
-            await apiHelper(`${url}/task_details/`, {
+            const res=await apiHelper(`${url}/task_details/`, {
                 method: "GET",
             })
+            setTasks(res)
         } catch (error) {
             alert(error)
         }
@@ -73,6 +85,8 @@ const TaskContextProvider = ({ children }: { children: ReactNode }) => {
             getTasks,
             isOpened,
             setOpened,
+            setFilteredTasks,
+            filteredTasks
 
 
 

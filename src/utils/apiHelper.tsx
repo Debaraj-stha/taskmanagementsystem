@@ -8,6 +8,7 @@ try {
     const headers:Record<string,string>={
     ...(options.headers?options.headers:{})
 }
+headers['Content-Type']="Application/json"
 const response=await fetch(url,{
     method:options.method,
     headers,
@@ -15,7 +16,7 @@ const response=await fetch(url,{
 })
 
 const res=await response.json()
-if(res.status==200) return res.data
+if(res.status==200) return res.tasks
 throw new Error(res.message||"API error")
 
 } catch (error) {

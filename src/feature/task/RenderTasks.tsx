@@ -3,7 +3,7 @@ import type { Task } from './type'
 import { useTask } from '../../context/TaskContext'
 
 const RenderTasks = () => {
-    const { tasks,getTasks,deleteTask,updateTask } = useTask()
+    const { tasks,getTasks,deleteTask,updateTask,filteredTasks } = useTask()
     const[isLoading,setLoading]=useState(false)
 
     const [isUpdating, setUpdating] = useState(false)
@@ -36,24 +36,23 @@ const RenderTasks = () => {
             } finally{
                 setLoading(false)
             }
-        })
-
+        })()
+     
     },[])
 
 
     return (
         <div className='space-y-4'>
             {
-                tasks.length==0 && <p className='text-center font-semibold'>No tasks available</p>
+                tasks!.length==0 && <p className='text-center font-semibold'>No tasks available</p>
             }
             {
-                tasks.map((t, index) => (
+                (filteredTasks.length>0 ?filteredTasks: tasks).map((t, index) => (
                     <div key={index} className='bg-gray-50 px-4 py-2 rounded hover:bg-gray-100 transition-colors space-y-5'>
                         <div className='flex justify-between items-center'>
                             <h2 className='font-semibold'>{t.title}</h2>
-                            {
-                                t.status === "completed" && <p className='rounded-4xl bg-green-100 text-green-600 py-2 px-3'>{t.status}</p>
-                            }
+                             <p className='rounded-4xl bg-green-100 text-green-600 py-2 px-3'>{t.status}</p>
+                            
                         </div>
                         <p>{t.description}</p>
                         <div className='flex gap-5'>
