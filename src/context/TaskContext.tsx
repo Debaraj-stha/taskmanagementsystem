@@ -1,26 +1,28 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import React, { createContext, useContext, useReducer, useState, type Dispatch, type ReactNode } from "react";
 import type { Task } from "../feature/task/type";
 import apiHelper from "../utils/apiHelper";
 
 interface TaskContextValue{
-createTask:()=>Promise<void>|void
-task:Task
+createTask:(task:Task)=>Promise<void>|void
 tasks:Task[]
 deleteTask:(id:string)=>Promise<void>|void
 getTasks:()=>Promise<void>|void
-updateTask:(id:string)=>Promise<void>|void
+updateTask:(id:string,task:Task)=>Promise<void>|void
+isOpened:boolean
+setOpened:(val:boolean)=>void
 }
 
 const TaskContext = createContext<TaskContextValue|null>(null)
 
 const TaskContextProvider = ({ children }: { children: ReactNode }) => {
-    const [task, setTask] = useState<Task>({ title: "", description: "" })
-    const [tasks, setTasks] = useState<Task[]>([])
+    const[tasks,setTasks]=useState<Task[]>([])
+    const[isOpened,setOpened]=useState(false)
+  
 
     const url = import.meta.env.SERVER_URL
-    const createTask = async () => {
+    const createTask = async (task:Task) => {
         try {
-            await apiHelper(url, {
+            await apiHelper(`${url}/create_task/`, {
                 method: "POST",
                 data: task
             })
@@ -32,9 +34,8 @@ const TaskContextProvider = ({ children }: { children: ReactNode }) => {
 
     const deleteTask = async (id: string) => {
         try {
-            await apiHelper(url, {
+            await apiHelper(`${url}/delete_task/${id}/`, {
                 method: "DELETE",
-                data: {id}
             })
             alert("task deleted")
         } catch (error) {
@@ -43,7 +44,7 @@ const TaskContextProvider = ({ children }: { children: ReactNode }) => {
     }
     const getTasks=async()=>{
         try {
-            await apiHelper(url, {
+            await apiHelper(`${url}/task_details/`, {
                 method: "GET",
             })
         } catch (error) {
@@ -51,11 +52,11 @@ const TaskContextProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
-      const updateTask=async(id:string)=>{
+      const updateTask=async(id:string,task:Task)=>{
         try {
-            await apiHelper(url, {
+            await apiHelper(`${url}/update_task/${id}/`, {
                 method: "PUT",
-                data:{id,...task}
+                data:{...task}
             })
             alert("task updated")
         } catch (error) {
@@ -66,11 +67,13 @@ const TaskContextProvider = ({ children }: { children: ReactNode }) => {
     return (
         <TaskContext.Provider value={{
             createTask,
-            task,
             tasks,
             deleteTask,
             updateTask,
-            getTasks
+            getTasks,
+            isOpened,
+            setOpened,
+
 
 
         }}>
