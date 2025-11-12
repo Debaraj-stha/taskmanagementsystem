@@ -17,7 +17,7 @@ const response=await fetch(url,{
 
 const res=await response.json()
 if(res.status==200) return res.tasks
-throw new Error(res.message||"API error")
+throw new Error(res.error||res.message||"API error")
 
 } catch (error) {
     throw error
