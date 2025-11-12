@@ -121,7 +121,7 @@ setTasks(staticTasks)
 
     const updateStatus=async(id:string,status:string)=>{
         try {
-            await apiHelper(`${url}/update_task_status/${id}/`, {
+            await apiHelper(`${url}/update_task/${id}/`, {
                 method: "PATCH",
                 data:{
                     status
