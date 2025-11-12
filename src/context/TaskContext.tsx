@@ -67,6 +67,35 @@ setTasks(staticTasks)
     },[])
 
  
+const webSocketRef = React.useRef<WebSocket | null>(null);
+
+useEffect(() => {
+    const wsUrl = import.meta.env.VITE_WEBSOCKET_URL ?? ""
+    if (!wsUrl) return
+    const ws = new WebSocket(wsUrl)
+    webSocketRef.current = ws
+
+    ws.onopen = (ev) => {
+        console.log("connection opened")
+    }
+
+    ws.onmessage = (ev) => {
+        console.log("websocket message:", ev.data)
+    }
+
+    ws.onerror = (ev) => {
+        console.error("websocket error", ev)
+    }
+
+    ws.onclose = (ev) => {
+        console.log("websocket closed", ev)
+    }
+
+    return () => {
+        ws.close()
+        webSocketRef.current = null
+    }
+}, [])
 
  
   
@@ -122,7 +151,7 @@ setTasks(staticTasks)
     const updateStatus=async(id:string,status:string)=>{
         try {
             await apiHelper(`${url}/update_task/${id}/`, {
-                method: "PATCH",
+                method: "PUT",
                 data:{
                     status
                 }
