@@ -21,7 +21,7 @@ const Homepage = () => {
     })
   }
   if (isOpened) {
-    return <Modal>
+    return <Modal onClose={()=>setOpened(false)}>
     <CreateEditForm
     task={task}
     isProcessing={isProcessing}
@@ -29,7 +29,8 @@ const Homepage = () => {
     handleChange={handleChange}
     onClose={()=>{
       setProcessing(false);
-      setOpened(false)
+      setOpened(false);
+      setTask({title:"",description:""})
 
     }}
     />
@@ -37,7 +38,7 @@ const Homepage = () => {
   }
   
   return (
-    <div className='flex flex-col gap-5'>
+    <div className='flex flex-col gap-5 bg-gray-900'>
       <Header />
       <div className='w-5xl mx-auto bg-blue-100 text-gray-900 rounded-xl py-5 px-8'>
         <Tasks />

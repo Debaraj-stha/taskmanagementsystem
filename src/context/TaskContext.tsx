@@ -4,16 +4,18 @@ import apiHelper from "../utils/apiHelper";
 
 
 interface TaskContextValue{
-createTask:(task:Task)=>Promise<void>|void
+createTask:(task:Task)=>Promise<void>
 tasks:Task[]
-deleteTask:(id:string)=>Promise<void>|void
+deleteTask:(id:string)=>Promise<void>
 getTasks:()=>Promise<void>|void
-updateTask:(id:string,task:Task)=>Promise<void>|void
+updateTask:(id:string,task:Task)=>Promise<void>
 isOpened:boolean
 filteredTasks:Task[]
 setFilteredTasks:(tasks:Task[])=>void
 setOpened:(val:boolean)=>void
 updateStatus:(id:string,status:string)=>Promise<void>
+message:string
+setMessage:(val:string)=>void
 }
 
 const TaskContext = createContext<TaskContextValue|null>(null)
@@ -61,10 +63,12 @@ const TaskContextProvider = ({ children }: { children: ReactNode }) => {
     const[tasks,setTasks]=useState<Task[]>([])
     const[isOpened,setOpened]=useState(false)
     const[filteredTasks,setFilteredTasks]=useState<Task[]>([])
+    const[isSuccess,setIsSuccess]=useState()
+    const[message,setMessage]=useState("")
 
-    useEffect(()=>{
-setTasks(staticTasks)
-    },[])
+//     useEffect(()=>{
+// setTasks(staticTasks)
+//     },[])
 
  
 const webSocketRef = React.useRef<WebSocket | null>(null);
@@ -104,14 +108,17 @@ useEffect(() => {
   
 
     const url = import.meta.env.VITE_SERVER_URL
-    const createTask = async (task:Task) => {
+    const createTask = async (task:Task)=> {
         try {
             await apiHelper(`${url}/create_task/`, {
                 method: "POST",
                 data: task
             })
-        } catch (error) {
-            alert(error)
+           setMessage("Task created succesafully")
+         
+        } catch (error:any) {
+           setMessage(error)
+           
         }
     }
 
@@ -120,9 +127,9 @@ useEffect(() => {
             await apiHelper(`${url}/delete_task/${id}/`, {
                 method: "DELETE",
             })
-            alert("task deleted")
-        } catch (error) {
-            alert(error)
+           setMessage("Task deleted succesafully")
+        } catch (error:any) {
+         setMessage(error)
         }
     }
     const getTasks=async()=>{
@@ -131,8 +138,8 @@ useEffect(() => {
                 method: "GET",
             })
             setTasks(res)
-        } catch (error) {
-            alert(error)
+        } catch (error:any) {
+            setMessage(error)
         }
     }
 
@@ -144,9 +151,9 @@ useEffect(() => {
             })
             const updatedTasks=tasks.map((t)=>t.id==id? {...t,...task}:t)
             setTasks(updatedTasks)
-            alert("task updated")
+           setMessage("Task updated succesafully")
         } catch (error) {
-            alert(error)
+            setMessage("Task updation failed")
         }
     }
 
@@ -161,9 +168,9 @@ useEffect(() => {
             })
             const updatedTasks=tasks.map((t)=>t.id==id? {...t,status}:t)
             setTasks(updatedTasks)
-            alert("task status updated")
-        } catch (error) {
-            alert(error)
+         setMessage(`Task status updated to '${status}' succesafully`)
+        } catch (error:any) {
+           setMessage(error)
         }
     }
 
@@ -178,7 +185,9 @@ useEffect(() => {
             setOpened,
             updateStatus,
             setFilteredTasks,
-            filteredTasks
+            filteredTasks,
+            setMessage,
+            message
 
 
 
