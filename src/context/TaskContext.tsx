@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useReducer, useState, type Dispatch, type ReactNode } from "react";
+import React, { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Task } from "../feature/task/type";
 import apiHelper from "../utils/apiHelper";
 
@@ -81,6 +81,9 @@ useEffect(() => {
 
     ws.onmessage = (ev) => {
         console.log("websocket message:", ev.data)
+        const data=JSON.parse(ev.data)
+        console.log("data from server",data)
+        alert(`message from server using socket:${data}`)
     }
 
     ws.onerror = (ev) => {
