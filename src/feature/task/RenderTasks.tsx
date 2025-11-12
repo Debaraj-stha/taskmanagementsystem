@@ -92,20 +92,27 @@ const RenderTasks = () => {
                                 {
                                     slideUpId === t.id && (
                                         <div className='flex gap-5'>
-                                              <button
+                                             {
+                                               ( t.status!=="completed" && t.status!=="in progress") &&
+                                                <button
                                                 disabled={isUpdating}
                                                 onClick={async() => {
                                                     await updateStatus(t.id!,"in progress")
                                                 }}
                                                 className='bg-yellow-300 hover:bg-yellow-400 cursor-pointer rounded-xl px-3 py-2 text-yellow-800 disabled:opacity-50'>
-                                                start</button>
-                                            <button
+                                                start
+                                                </button>
+                                             }
+                                           {
+                                           ( t.status!=="pending" && t.status!=="completed") && 
+                                             <button
                                                 disabled={isUpdating}
                                                 onClick={async() => {
                                                    await updateStatus(t.id!,"completed")
                                                 }}
                                                 className='bg-blue-300 hover:bg-blue-400 cursor-pointer rounded-xl px-3 py-2 text-blue-800 disabled:opacity-50'>
                                                 completed</button>
+                                           }
                                             <button
                                                 disabled={isUpdating}
                                                 onClick={() => {
