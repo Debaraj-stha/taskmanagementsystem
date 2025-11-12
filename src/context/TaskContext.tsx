@@ -66,9 +66,9 @@ const TaskContextProvider = ({ children }: { children: ReactNode }) => {
     const[isSuccess,setIsSuccess]=useState()
     const[message,setMessage]=useState("")
 
-//     useEffect(()=>{
-// setTasks(staticTasks)
-//     },[])
+    useEffect(()=>{
+setTasks(staticTasks)
+    },[])
 
  
 const webSocketRef = React.useRef<WebSocket | null>(null);

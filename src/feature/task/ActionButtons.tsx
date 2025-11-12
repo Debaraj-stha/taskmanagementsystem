@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import Modal from '../../components/ui/Modal'
+
 import { useTask } from '../../context/TaskContext'
 
 const ActionButtons = () => {
