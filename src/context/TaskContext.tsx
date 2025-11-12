@@ -13,10 +13,47 @@ isOpened:boolean
 filteredTasks:Task[]
 setFilteredTasks:(tasks:Task[])=>void
 setOpened:(val:boolean)=>void
+updateStatus:(id:string,status:string)=>Promise<void>
 }
 
 const TaskContext = createContext<TaskContextValue|null>(null)
-
+export const staticTasks: Task[] = [
+  {
+    id: "1",
+    title: "Design login page UI",
+    status: "in progress",
+    due_date: new Date("2025-11-15"),
+    description: "Create a responsive login page using Tailwind CSS and Figma design reference."
+  },
+  {
+    id: "2",
+    title: "Set up Firebase authentication",
+    status: "pending",
+    due_date: new Date("2025-11-13"),
+    description: "Implement email/password and Google sign-in methods using Firebase Auth."
+  },
+  {
+    id: "3",
+    title: "Implement Redux store for user state",
+    status: "completed",
+    due_date: new Date("2025-11-10"),
+    description: "Set up Redux Toolkit slice for managing user authentication and profile data."
+  },
+  {
+    id: "4",
+    title: "Integrate WebRTC for video calls",
+    status: "completed",
+    due_date: new Date("2025-11-20"),
+    description: "Build real-time video call functionality using WebRTC and Socket.IO."
+  },
+  {
+    id: "5",
+    title: "Deploy app to Vercel",
+    status: "pending",
+    due_date: new Date("2025-11-18"),
+    description: "Prepare the project for production deployment and connect to custom domain."
+  }
+]
 
 
 
@@ -24,6 +61,10 @@ const TaskContextProvider = ({ children }: { children: ReactNode }) => {
     const[tasks,setTasks]=useState<Task[]>([])
     const[isOpened,setOpened]=useState(false)
     const[filteredTasks,setFilteredTasks]=useState<Task[]>([])
+
+    useEffect(()=>{
+setTasks(staticTasks)
+    },[])
 
  
 
@@ -70,7 +111,26 @@ const TaskContextProvider = ({ children }: { children: ReactNode }) => {
                 method: "PUT",
                 data:{...task}
             })
+            const updatedTasks=tasks.map((t)=>t.id==id? {...t,...task}:t)
+            setTasks(updatedTasks)
             alert("task updated")
+        } catch (error) {
+            alert(error)
+        }
+    }
+
+    const updateStatus=async(id:string,status:string)=>{
+        try {
+            await apiHelper(`${url}/update_task_status/${id}/`, {
+                method: "PATCH",
+                data:{
+                    status
+                }
+                
+            })
+            const updatedTasks=tasks.map((t)=>t.id==id? {...t,status}:t)
+            setTasks(updatedTasks)
+            alert("task status updated")
         } catch (error) {
             alert(error)
         }
@@ -85,6 +145,7 @@ const TaskContextProvider = ({ children }: { children: ReactNode }) => {
             getTasks,
             isOpened,
             setOpened,
+            updateStatus,
             setFilteredTasks,
             filteredTasks
 

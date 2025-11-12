@@ -32,7 +32,7 @@ const CreateEditForm = ({ task, handleChange, onClose, isEdit, id, isProcessing,
           }
 
         }}
-        className='py-2.5 px-3 rounded bg-blue-600 hover:bg-blue-700 text-white cursor-pointer disabled:opacity-55'>Create</button>
+        className='py-2.5 px-3 rounded bg-blue-600 hover:bg-blue-700 text-white cursor-pointer disabled:opacity-55'>{isEdit ? "Update Task":"Create Task"}</button>
     </div>
   )
 }

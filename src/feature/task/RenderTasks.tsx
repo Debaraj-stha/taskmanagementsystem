@@ -3,15 +3,17 @@ import type { Task } from './type'
 import { useTask } from '../../context/TaskContext'
 import Modal from '../../components/ui/Modal'
 import CreateEditForm from './CreateEditForm'
+import { CgChevronRight } from 'react-icons/cg'
 
 const RenderTasks = () => {
-    const { tasks, getTasks, deleteTask, filteredTasks } = useTask()
+    const { tasks, getTasks, deleteTask, filteredTasks,updateStatus } = useTask()
     const [isLoading, setLoading] = useState(false)
 
     const [isUpdating, setUpdating] = useState(false)
     const [isDeleting, setDeleting] = useState(false)
     const [task, setTask] = useState<Task>({ title: "", description: "" })
     const [updateId, setUpdateId] = useState<string | null>(null)
+    const [slideUpId, setSlideUpId] = useState<string | null>(null)
 
 
     const handleDelete = async (id: string) => {
@@ -84,16 +86,41 @@ const RenderTasks = () => {
 
                                 </div>
                                 <p>{t.description}</p>
-                                <div className='flex gap-5'>
-                                    <button
-                                        disabled={isUpdating}
-                                        onClick={() => setUpdateId(t.id!)}
-                                        className='bg-green-500 hover:bg-green-600 cursor-pointer rounded-xl px-3 py-2 text-white disabled:opacity-50'>Update</button>
-                                    <button
-                                        disabled={isDeleting}
-                                        onClick={() => handleDelete(t.id!)}
-                                        className='bg-red-600 cursor-pointer hover:bg-red-700 text-white rounded-xl px-3 py-2 disabled:opacity-50'>Delete</button>
-                                </div>
+                                <button
+                                    onClick={() => setSlideUpId(prev => !prev ? t.id! : null)}
+                                    className='rounded-lg bg-blue-200 px-3 py-1 hover:bg-blue-300'><CgChevronRight className='text-blue-500' size={20} /></button>
+                                {
+                                    slideUpId === t.id && (
+                                        <div className='flex gap-5'>
+                                              <button
+                                                disabled={isUpdating}
+                                                onClick={async() => {
+                                                    await updateStatus(t.id!,"in progress")
+                                                }}
+                                                className='bg-yellow-300 hover:bg-yellow-400 cursor-pointer rounded-xl px-3 py-2 text-yellow-800 disabled:opacity-50'>
+                                                start</button>
+                                            <button
+                                                disabled={isUpdating}
+                                                onClick={async() => {
+                                                   await updateStatus(t.id!,"completed")
+                                                }}
+                                                className='bg-blue-300 hover:bg-blue-400 cursor-pointer rounded-xl px-3 py-2 text-blue-800 disabled:opacity-50'>
+                                                completed</button>
+                                            <button
+                                                disabled={isUpdating}
+                                                onClick={() => {
+                                                    setUpdateId(t.id!);
+                                                    setTask(t)
+                                                }}
+                                                className='bg-green-300 hover:bg-green-400 cursor-pointer rounded-xl px-3 py-2 text-green-800 disabled:opacity-50'>
+                                                Update</button>
+                                            <button
+                                                disabled={isDeleting}
+                                                onClick={() => handleDelete(t.id!)}
+                                                className='bg-red-300 cursor-pointer hover:bg-red-400 text-red-800 rounded-xl px-3 py-2 disabled:opacity-50'>Delete</button>
+                                        </div>
+                                    )
+                                }
                             </div>
                         ))
             }

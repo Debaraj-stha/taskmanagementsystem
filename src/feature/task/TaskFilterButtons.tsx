@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useTask } from '../../context/TaskContext'
 
 const TaskFilterButtons = () => {
-    type buttons = "all" | "completed" | "pending"
+    type buttons = "all" | "completed" | "pending"|"in progress"
     const [activeButton, setActiveButton] = useState<buttons>("all")
-    const buttons = ["all", "completed", "pending"]
+    const buttons = ["all", "completed", "pending","in progress"]
     const{setFilteredTasks,tasks}=useTask()
     const handleFilter = (btn: string) => {
         const filtered=[...tasks].filter((task)=>task.status===btn)
