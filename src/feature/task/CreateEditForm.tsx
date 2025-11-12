@@ -20,7 +20,7 @@ const CreateEditForm = ({ task, handleChange, onClose, isEdit, id, isProcessing,
       <h2 className='text-gray-900'>{isEdit ? "Edit Task":"Create New Task"}</h2>
       <Input name='title' value={task!.title ?? ""} onChange={handleChange} placeholder='Enter title here' />
       <Input name='description' value={task!.description ?? ""} onChange={handleChange} placeholder='Enter description here' />
-      <Input name='due_date' type="datetime-local" value={(task.due_date ?? new Date()).toISOString()} onChange={handleChange} placeholder='Enter due date' />
+      <Input name='due_date' type="datetime-local" value={task.due_date ? task.due_date.toString() :new Date().toISOString().slice(0,16)} onChange={handleChange} placeholder='Enter due date' />
       <button
         disabled={isProcessing}
         onClick={async () => {

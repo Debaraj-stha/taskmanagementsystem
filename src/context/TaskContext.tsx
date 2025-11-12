@@ -83,7 +83,7 @@ useEffect(() => {
         console.log("websocket message:", ev.data)
         const data=JSON.parse(ev.data)
         console.log("data from server",data)
-        alert(`message from server using socket:${data}`)
+        alert(`message from server :${data.message}`)
     }
 
     ws.onerror = (ev) => {
@@ -110,7 +110,6 @@ useEffect(() => {
                 method: "POST",
                 data: task
             })
-            alert("task created")
         } catch (error) {
             alert(error)
         }
