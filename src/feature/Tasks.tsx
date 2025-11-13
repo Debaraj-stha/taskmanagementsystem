@@ -11,9 +11,12 @@ const Tasks = () => {
     <div className='space-y-5 mx-auto max-w-5xl '>
       <h2 className='font-semibold text-3xl'>Manage your Tasks</h2>
       {/* buttons to filter tasks */}
-      <TaskFilterButtons/>
-      <RenderTasks/>
+     <div className='flex justify-between flex-col md:flex-row flex-wrap '>
+       <TaskFilterButtons/>
       <ActionButtons/>
+     </div>
+      <RenderTasks/>
+      
     </div>
   )
 }

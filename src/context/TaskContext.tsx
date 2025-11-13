@@ -53,7 +53,95 @@ const staticTasks: Task []=[
     },
   ],
 },
- 
+   {
+  id: 'task-001',
+  title: 'Develop Task Management Feature',
+  description: 'Implement task creation, assignment, and tracking',
+  status: 'in progress',
+  createdBy: { id: 'u1', username: 'Alice' },
+  task_members: [
+    { id: 'u2', username: 'Bob' },
+    { id: 'u3', username: 'Carol' },
+  ],
+  subtasks: [
+    {
+      id: 'sub-001',
+      sub_title: 'Design UI for tasks',
+      assigned_to: ["Jhon"],
+    },
+    {
+      id: 'sub-002',
+      sub_title: 'Implement backend API',
+      assigned_to: ['Carol' ],
+    },
+  ],
+},  {
+  id: 'task-001',
+  title: 'Develop Task Management Feature',
+  description: 'Implement task creation, assignment, and tracking',
+  status: 'in progress',
+  createdBy: { id: 'u1', username: 'Alice' },
+  task_members: [
+    { id: 'u2', username: 'Bob' },
+    { id: 'u3', username: 'Carol' },
+  ],
+  subtasks: [
+    {
+      id: 'sub-001',
+      sub_title: 'Design UI for tasks',
+      assigned_to: ["Jhon"],
+    },
+    {
+      id: 'sub-002',
+      sub_title: 'Implement backend API',
+      assigned_to: ['Carol' ],
+    },
+  ],
+},  {
+  id: 'task-001',
+  title: 'Develop Task Management Feature',
+  description: 'Implement task creation, assignment, and tracking',
+  status: 'in progress',
+  createdBy: { id: 'u1', username: 'Alice' },
+  task_members: [
+    { id: 'u2', username: 'Bob' },
+    { id: 'u3', username: 'Carol' },
+  ],
+  subtasks: [
+    {
+      id: 'sub-001',
+      sub_title: 'Design UI for tasks',
+      assigned_to: ["Jhon"],
+    },
+    {
+      id: 'sub-002',
+      sub_title: 'Implement backend API',
+      assigned_to: ['Carol' ],
+    },
+  ],
+},  {
+  id: 'task-001',
+  title: 'Develop Task Management Feature',
+  description: 'Implement task creation, assignment, and tracking',
+  status: 'in progress',
+  createdBy: { id: 'u1', username: 'Alice' },
+  task_members: [
+    { id: 'u2', username: 'Bob' },
+    { id: 'u3', username: 'Carol' },
+  ],
+  subtasks: [
+    {
+      id: 'sub-001',
+      sub_title: 'Design UI for tasks',
+      assigned_to: ["Jhon"],
+    },
+    {
+      id: 'sub-002',
+      sub_title: 'Implement backend API',
+      assigned_to: ['Carol' ],
+    },
+  ],
+},
 ]
 
 
