@@ -27,7 +27,7 @@ const CreateEditForm = ({ task, handleChange, onClose, isEdit, id, isProcessing,
   }
   return (
     <div className='bg-white rounded-lg py-4 px-8  min-w-md flex flex-col gap-4'>
-      <h2 className='text-gray-900'>{isEdit ? "Edit Task" : "Create New Task"}</h2>
+      <h2 className='text-gray-900 font-bold text-2xl'>{isEdit ? "Edit Task" : "Create New Task"}</h2>
       <Input label='Title' name='title' value={task!.title ?? ""} onChange={handleChange} placeholder='Enter title here' />
       <Input label='Description' name='description' value={task!.description ?? ""} onChange={handleChange} placeholder='Enter description here' />
 

@@ -19,43 +19,31 @@ setMessage:(val:string)=>void
 }
 
 const TaskContext = createContext<TaskContextValue|null>(null)
-export const staticTasks: Task[] = [
-  {
-    id: "1",
-    title: "Design login page UI",
-    status: "in progress",
-    due_date: new Date("2025-11-15"),
-    description: "Create a responsive login page using Tailwind CSS and Figma design reference."
-  },
-  {
-    id: "2",
-    title: "Set up Firebase authentication",
-    status: "pending",
-    due_date: new Date("2025-11-13"),
-    description: "Implement email/password and Google sign-in methods using Firebase Auth."
-  },
-  {
-    id: "3",
-    title: "Implement Redux store for user state",
-    status: "completed",
-    due_date: new Date("2025-11-10"),
-    description: "Set up Redux Toolkit slice for managing user authentication and profile data."
-  },
-  {
-    id: "4",
-    title: "Integrate WebRTC for video calls",
-    status: "completed",
-    due_date: new Date("2025-11-20"),
-    description: "Build real-time video call functionality using WebRTC and Socket.IO."
-  },
-  {
-    id: "5",
-    title: "Deploy app to Vercel",
-    status: "pending",
-    due_date: new Date("2025-11-18"),
-    description: "Prepare the project for production deployment and connect to custom domain."
-  }
-]
+const staticTasks: Task []=[ {
+  id: 'task-001',
+  title: 'Develop Task Management Feature',
+  description: 'Implement task creation, assignment, and tracking',
+  status: 'in progress',
+  createdBy: { id: 'u1', username: 'Alice' },
+  assignedUsers: [
+    { id: 'u2', username: 'Bob' },
+    { id: 'u3', username: 'Carol' },
+  ],
+  subtasks: [
+    {
+      id: 'sub-001',
+      title: 'Design UI for tasks',
+      status: 'completed',
+      assignedUsers: [{ id: 'u2', username: 'Bob' }],
+    },
+    {
+      id: 'sub-002',
+      title: 'Implement backend API',
+      status: 'in progress',
+      assignedUsers: [{ id: 'u3', username: 'Carol' }],
+    },
+  ],
+}]
 
 
 
@@ -137,7 +125,7 @@ useEffect(() => {
             const res=await apiHelper(`${url}/task_details/`, {
                 method: "GET",
             })
-            setTasks(res)
+            setTasks(res.tasks)
         } catch (error:any) {
             setMessage(error)
         }
@@ -167,7 +155,7 @@ useEffect(() => {
                 
             })
             const updatedTasks=tasks.map((t)=>t.id==id? {...t,status}:t)
-            setTasks(updatedTasks)
+            // setTasks(updatedTasks)
          setMessage(`Task status updated to '${status}' succesafully`)
         } catch (error:any) {
            setMessage(error)
