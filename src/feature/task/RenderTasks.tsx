@@ -6,14 +6,14 @@ import CreateEditForm from './CreateEditForm'
 import PopupMessage from './PopupMessage'
 
 const RenderTasks = () => {
-    const { tasks, getTasks, deleteTask, filteredTasks, updateStatus, message ,activeButton,setSubtask,subtask} = useTask()
+    const { tasks, getTasks, deleteTask, filteredTasks, updateStatus, message, activeButton, setSubtask, subtask } = useTask()
     const [isLoading, setLoading] = useState(false)
     const [isUpdating, setUpdating] = useState(false)
     const [isDeleting, setDeleting] = useState(false)
     const [task, setTask] = useState<Task>({ title: '', description: '', task_members: [] })
     const [updateId, setUpdateId] = useState<string | null>(null)
     const [modalOpen, setModalOpen] = useState(false)
-    const[parentTaskId,setParentTaskId]=useState<string|null>(null)
+    const [parentTaskId, setParentTaskId] = useState<string | null>(null)
 
     const handleDelete = async (id: string) => {
         try {
@@ -45,7 +45,7 @@ const RenderTasks = () => {
         return (
             <Modal onClose={() => setUpdateId(null)}>
                 <CreateEditForm
-                  
+
                     isEdit={true}
                     isProcessing={isUpdating}
                     setProcessing={setUpdating}
@@ -63,6 +63,21 @@ const RenderTasks = () => {
         return <PopupMessage onClose={() => setModalOpen(false)} message={message} />
     }
 
+    if (parentTaskId) {
+        return <Modal onClose={() => setUpdateId(null)}>
+            <CreateEditForm
+                mode='subtask'
+                isProcessing={isUpdating}
+                setProcessing={setUpdating}
+                id={parentTaskId}
+                onClose={() => {
+                    setUpdateId(null)
+                    setUpdating(false)
+                }}
+            />
+        </Modal>
+    }
+
     //subtasks
 
     const Subtasks = ({ t }: { t: Task }) => {
@@ -71,9 +86,9 @@ const RenderTasks = () => {
             <ol className="list-disc list-inside space-y-2">
                 {(t.subtasks ?? []).map((sub, i) => (
                     <li key={i} className="space-y-1 list-decimal">
-                     
-                            <span>{sub.sub_title}</span>
-                     
+
+                        <span>{sub.sub_title}</span>
+
 
                         {/* SUBTASK ASSIGNED USERS */}
                         <div className="ml-4 text-xs text-gray-600">
@@ -140,8 +155,8 @@ const RenderTasks = () => {
             <button
                 disabled={isDeleting}
                 onClick={() => {
-                   setParentTaskId(t.id!)
-                   setSubtask({...subtask,parent_task:t.id!})
+                    setParentTaskId(t.id!)
+                    setSubtask({ ...subtask, parent_task: t.id! })
                 }}
                 className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl px-3 py-2 disabled:opacity-50"
             >
@@ -158,8 +173,8 @@ const RenderTasks = () => {
             ) : tasks?.length === 0 ? (
                 <p className="text-center font-semibold">No tasks available</p>
             ) : (
-                (activeButton==="all" ?  tasks:tasks.filter(t=>
-                    t.status===activeButton
+                (activeButton === "all" ? tasks : tasks.filter(t =>
+                    t.status === activeButton
                 )).map((t, index) => (
                     <div
                         key={index}

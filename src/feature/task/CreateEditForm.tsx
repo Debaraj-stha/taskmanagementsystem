@@ -206,9 +206,9 @@ const CreateEditForm = ({
                 {user.username} ✕
               </span>
             ))
-          : (current as Subtask).assigned_to?.length === 0
+          : ((current as Subtask)??[]).assigned_to?.length === 0
             ? <span className='italic text-gray-500'>No members assigned yet</span>
-            : (current as Subtask).assigned_to!.map((username, i) => (
+            : (current as Subtask).assigned_to?.map((username, i) => (
               <span key={i} onClick={() => handleRemove(username)} className='rounded-2xl px-4 py-1 bg-yellow-100 cursor-pointer hover:bg-red-200 transition'>
                 {username} ✕
               </span>
