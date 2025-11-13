@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import type { Task } from "../feature/task/type";
+import type { Task, User } from "../feature/task/type";
 import apiHelper from "../utils/apiHelper";
 
 
@@ -16,6 +16,10 @@ setOpened:(val:boolean)=>void
 updateStatus:(id:string,status:string)=>Promise<void>
 message:string
 setMessage:(val:string)=>void
+task:Task
+setTask:(val:Task)=>void
+getUsers:()=>Promise<void>
+users:User[]
 }
 
 const TaskContext = createContext<TaskContextValue|null>(null)
@@ -25,7 +29,7 @@ const staticTasks: Task []=[ {
   description: 'Implement task creation, assignment, and tracking',
   status: 'in progress',
   createdBy: { id: 'u1', username: 'Alice' },
-  assignedUsers: [
+  task_members: [
     { id: 'u2', username: 'Bob' },
     { id: 'u3', username: 'Carol' },
   ],
@@ -34,13 +38,13 @@ const staticTasks: Task []=[ {
       id: 'sub-001',
       title: 'Design UI for tasks',
       status: 'completed',
-      assignedUsers: [{ id: 'u2', username: 'Bob' }],
+      task_members: [{ id: 'u2', username: 'Bob' }],
     },
     {
       id: 'sub-002',
       title: 'Implement backend API',
       status: 'in progress',
-      assignedUsers: [{ id: 'u3', username: 'Carol' }],
+      task_members: [{ id: 'u3', username: 'Carol' }],
     },
   ],
 }]
@@ -49,6 +53,13 @@ const staticTasks: Task []=[ {
 
 const TaskContextProvider = ({ children }: { children: ReactNode }) => {
     const[tasks,setTasks]=useState<Task[]>([])
+    const[users,setUsers]=useState<User[]>([{username:"Jhon"},{username:"Alex"},{username:"Jeny"}])
+     const [task, setTask] = useState<Task>({
+       title: '',
+       description: '',
+       due_date: new Date(),
+       task_members: [{username:"jhon"},{username:"Alex"}],
+     })
     const[isOpened,setOpened]=useState(false)
     const[filteredTasks,setFilteredTasks]=useState<Task[]>([])
     const[isSuccess,setIsSuccess]=useState()
@@ -154,13 +165,28 @@ useEffect(() => {
                 }
                 
             })
-            const updatedTasks=tasks.map((t)=>t.id==id? {...t,status}:t)
-            // setTasks(updatedTasks)
+            const updatedTasks=tasks.map((t)=>t.id==id? {...t,status: status as "in progress" | "pending" | "completed"}:t)
+            setTasks(updatedTasks)
          setMessage(`Task status updated to '${status}' succesafully`)
         } catch (error:any) {
            setMessage(error)
         }
     }
+
+    const getUsers=async()=>{
+        try {
+            const res=await apiHelper(`${url}/get_users/`,{
+                method:"GET"
+            })
+            setUsers(res.users)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(()=>{
+getUsers()
+    },[])
 
     return (
         <TaskContext.Provider value={{
@@ -171,12 +197,15 @@ useEffect(() => {
             getTasks,
             isOpened,
             setOpened,
+            getUsers,
             updateStatus,
             setFilteredTasks,
             filteredTasks,
             setMessage,
-            message
-
+            message,
+            task,
+            setTask,
+            users
 
 
         }}>

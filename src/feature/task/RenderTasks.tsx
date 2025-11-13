@@ -10,7 +10,7 @@ const RenderTasks = () => {
     const [isLoading, setLoading] = useState(false)
     const [isUpdating, setUpdating] = useState(false)
     const [isDeleting, setDeleting] = useState(false)
-    const [task, setTask] = useState<Task>({ title: '', description: '', assignedUsers: [] })
+    const [task, setTask] = useState<Task>({ title: '', description: '', task_members: [] })
     const [updateId, setUpdateId] = useState<string | null>(null)
     const [modalOpen, setModalOpen] = useState(false)
 
@@ -49,7 +49,6 @@ const RenderTasks = () => {
                     isProcessing={isUpdating}
                     setProcessing={setUpdating}
                     id={updateId}
-                    task={task}
                     onClose={() => {
                         setUpdateId(null)
                         setUpdating(false)
@@ -88,10 +87,10 @@ const RenderTasks = () => {
                         {/* SUBTASK ASSIGNED USERS */}
                         <div className="ml-4 text-xs text-gray-600">
                             <span className="font-medium">Assigned To:</span>{' '}
-                            {sub.assignedUsers?.length ? (
+                            {sub.task_members?.length ? (
                                 <ul className="list-disc list-inside ml-3">
-                                    {sub.assignedUsers.map((user, j) => (
-                                        <li key={j}>{user.name}</li>
+                                    {sub.task_members.map((user, j) => (
+                                        <li key={j}>{user.username}</li>
                                     ))}
                                 </ul>
                             ) : (
@@ -185,14 +184,14 @@ const RenderTasks = () => {
                         <div className="flex flex-wrap gap-6 text-sm text-gray-600">
                             <p>
                                 <span className="font-semibold text-gray-800">Created By:</span>{' '}
-                                {t.createdBy?.name || 'Unknown'}
+                                {t.createdBy?.username || 'Unknown'}
                             </p>
                             <div>
                                 <span className="font-semibold text-gray-800">Assigned Users:</span>{' '}
-                                {t.assignedUsers?.length ? (
+                                {t.task_members?.length ? (
                                     <ul className="list-disc list-inside ml-2">
-                                        {t.assignedUsers.map((user, i) => (
-                                            <li key={i}>{user.name}</li>
+                                        {t.task_members.map((user, i) => (
+                                            <li key={i}>{user.username}</li>
                                         ))}
                                     </ul>
                                 ) : (

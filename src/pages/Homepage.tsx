@@ -7,30 +7,29 @@ import type { Task } from '../feature/task/type'
 import CreateEditForm from '../feature/task/CreateEditForm'
 
 const Homepage = () => {
-  const { isOpened, setOpened } = useTask()
+  const { isOpened, setOpened ,setTask,task} = useTask()
   const [isProcessing, setProcessing] = useState(false)
 
 
-  const [task, setTask] = useState<Task>({
-    title: '',
-    description: '',
-    due_date: new Date(),
-    assignedUsers: [],
-  })
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setTask((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
+    const base: Task = task ?? {
+      title: '',
+      description: '',
+      due_date: new Date(),
+      assignedUsers: [{ username: 'jhon' }, { username: 'Alex' }],
+    }
+    setTask({ ...base, [name]: value } as Task)
   }
+ 
 
   if (isOpened) {
     return (
       <Modal onClose={() => setOpened(false)}>
         <CreateEditForm
-          task={task}
+       
           isProcessing={isProcessing}
           setProcessing={setProcessing}
           handleChange={handleChange}
