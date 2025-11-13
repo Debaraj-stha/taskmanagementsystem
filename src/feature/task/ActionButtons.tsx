@@ -23,6 +23,7 @@ const ActionButtons = () => {
         data: { username: user.username }
       })
       setMessage("user created succesafully")
+     
       console.log(res)
     } catch (error:any) {
       console.log(error)
@@ -30,6 +31,7 @@ const ActionButtons = () => {
     }
     finally {
       setIsSubmitting(false)
+       setUSerModalOpened(false)
     }
   }
 

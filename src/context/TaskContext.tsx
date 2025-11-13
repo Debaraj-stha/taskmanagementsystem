@@ -217,9 +217,11 @@ useEffect(() => {
     const url = import.meta.env.VITE_SERVER_URL
     const createTask = async (task:Task)=> {
         try {
+            const usernames=task.task_members.map(user=>user.username)
+            const taskPayload={...task,task_members:usernames}
             await apiHelper(`${url}/create_task/`, {
                 method: "POST",
-                data: task
+                data: taskPayload
             })
            setMessage("Task created succesafully")
          
