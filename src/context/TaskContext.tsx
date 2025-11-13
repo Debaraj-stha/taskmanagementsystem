@@ -65,7 +65,7 @@ const TaskContextProvider = ({ children }: { children: ReactNode }) => {
        title: '',
        description: '',
        due_date: new Date(),
-       task_members: [{username:"jhon"},{username:"Alex"}],
+       task_members: [{username:"jhon",id:"1"},{username:"Alex",id:"2"}],
      })
     const[isOpened,setOpened]=useState(false)
     const[filteredTasks,setFilteredTasks]=useState<Task[]>([])

@@ -173,13 +173,13 @@ const CreateEditForm = ({
 
       {/* Assign Members */}
       <div className='relative'>
-        <Input
+        {/* <Input
           label='Assign Members'
           name='assigned-members'
           value={searchValue}
           placeholder='Type member name...'
           onChange={searchUsers}
-        />
+        /> */}
 
         {filteredUsers.length > 0 && (
           <div className='absolute bg-white border rounded shadow-md mt-1 w-full z-10'>
@@ -195,6 +195,23 @@ const CreateEditForm = ({
           </div>
         )}
       </div>
+      <select 
+      onChange={(e:React.ChangeEvent<HTMLSelectElement>)=>{
+        const value=e.target.value
+        const user=users.find(u=>u.username.toLocaleLowerCase()===value.toLocaleLowerCase())!
+        setFilteredUsers((prev)=>[...prev,user])
+      }}
+      className='bg-gray-800 text-white rounded px-3 py-2.5'>
+        <option
+        
+        >---Select members---</option>
+        {
+          users.map((user,index)=>{
+           
+            return <option key={index} value={user.id}>{user.username}</option>
+          })
+        }
+      </select>
 
       {/* Assigned Members */}
       <p className='text-gray-900 flex gap-3 flex-wrap'>
