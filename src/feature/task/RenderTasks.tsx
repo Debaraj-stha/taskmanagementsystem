@@ -6,13 +6,14 @@ import CreateEditForm from './CreateEditForm'
 import PopupMessage from './PopupMessage'
 
 const RenderTasks = () => {
-    const { tasks, getTasks, deleteTask, filteredTasks, updateStatus, message } = useTask()
+    const { tasks, getTasks, deleteTask, filteredTasks, updateStatus, message ,activeButton,setSubtask,subtask} = useTask()
     const [isLoading, setLoading] = useState(false)
     const [isUpdating, setUpdating] = useState(false)
     const [isDeleting, setDeleting] = useState(false)
     const [task, setTask] = useState<Task>({ title: '', description: '', task_members: [] })
     const [updateId, setUpdateId] = useState<string | null>(null)
     const [modalOpen, setModalOpen] = useState(false)
+    const[parentTaskId,setParentTaskId]=useState<string|null>(null)
 
     const handleDelete = async (id: string) => {
         try {
@@ -44,7 +45,7 @@ const RenderTasks = () => {
         return (
             <Modal onClose={() => setUpdateId(null)}>
                 <CreateEditForm
-                    handleChange={handleChange}
+                  
                     isEdit={true}
                     isProcessing={isUpdating}
                     setProcessing={setUpdating}
@@ -70,27 +71,17 @@ const RenderTasks = () => {
             <ol className="list-disc list-inside space-y-2">
                 {(t.subtasks ?? []).map((sub, i) => (
                     <li key={i} className="space-y-1 list-decimal">
-                        <>
-                            <span>{sub.title}</span>
-                            <span
-                                className={`text-xs rounded-full px-2 py-0.5 ${sub.status === 'completed'
-                                    ? 'bg-green-100 text-green-600'
-                                    : sub.status === 'in progress'
-                                        ? 'bg-yellow-100 text-yellow-600'
-                                        : 'bg-gray-100 text-gray-600'
-                                    }`}
-                            >
-                                {sub.status}
-                            </span>
-                        </>
+                     
+                            <span>{sub.sub_title}</span>
+                     
 
                         {/* SUBTASK ASSIGNED USERS */}
                         <div className="ml-4 text-xs text-gray-600">
                             <span className="font-medium">Assigned To:</span>{' '}
-                            {sub.task_members?.length ? (
+                            {sub.assigned_to?.length ? (
                                 <ul className="list-disc list-inside ml-3">
-                                    {sub.task_members.map((user, j) => (
-                                        <li key={j}>{user.username}</li>
+                                    {sub.assigned_to.map((user, j) => (
+                                        <li key={j}>{user}</li>
                                     ))}
                                 </ul>
                             ) : (
@@ -146,6 +137,16 @@ const RenderTasks = () => {
             >
                 Delete
             </button>
+            <button
+                disabled={isDeleting}
+                onClick={() => {
+                   setParentTaskId(t.id!)
+                   setSubtask({...subtask,parent_task:t.id!})
+                }}
+                className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl px-3 py-2 disabled:opacity-50"
+            >
+                Create Subtask
+            </button>
         </div>
     }
 
@@ -157,7 +158,9 @@ const RenderTasks = () => {
             ) : tasks?.length === 0 ? (
                 <p className="text-center font-semibold">No tasks available</p>
             ) : (
-                (filteredTasks.length > 0 ? filteredTasks : tasks).map((t, index) => (
+                (activeButton==="all" ?  tasks:tasks.filter(t=>
+                    t.status===activeButton
+                )).map((t, index) => (
                     <div
                         key={index}
                         className="bg-gray-50 px-4 py-3 rounded hover:bg-gray-100 transition-colors space-y-3 shadow-sm"

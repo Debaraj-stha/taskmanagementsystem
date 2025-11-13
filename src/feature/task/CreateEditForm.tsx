@@ -1,30 +1,51 @@
 import React, { useState } from 'react'
 import Input from '../../components/ui/Input'
-import type { Task, User } from './type'
+import type { Task, User, Subtask } from './type'
 import { useTask } from '../../context/TaskContext'
 import PopupMessage from './PopupMessage'
 
 interface CreateEditFormProps {
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   isEdit?: boolean
   onClose?: () => void
   id?: string
   isProcessing?: boolean
   setProcessing: (value: boolean) => void
+  mode?: 'task' | 'subtask'
 }
 
 const CreateEditForm = ({
-  handleChange,
-  onClose,
   isEdit,
+  onClose,
   id,
   isProcessing,
   setProcessing,
+  mode = 'task',
 }: CreateEditFormProps) => {
-  const { createTask, updateTask, message, users ,task,setTask} = useTask()
+  const {
+    createTask,
+    updateTask,
+    createSubtask,
+    updateSubtask,
+    message,
+    users,
+    task,
+    subtask,
+    setTask,
+    setSubtask,
+  } = useTask()
+
   const [modalOpen, setModalOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const [filteredUsers, setFilteredUsers] = useState<User[]>([])
+
+  let current: Task | Subtask = mode === 'task' ? task : subtask
+  const setCurrent = (value: Task | Subtask) => {
+    if (mode === 'task') {
+      setTask(value as Task)
+    } else {
+      setSubtask(value as Subtask)
+    }
+  }
 
   if (modalOpen) {
     return (
@@ -38,7 +59,7 @@ const CreateEditForm = ({
     )
   }
 
-  //  Search users by username
+  // Search users
   const searchUsers = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setSearchValue(value)
@@ -54,32 +75,53 @@ const CreateEditForm = ({
     setFilteredUsers(matched)
   }
 
-  //  Assign user
+  // Assign user
   const handleAssign = (user: User) => {
-    // avoid duplicates
-    if (task.task_members.some(u => u.username === user.username)) return
-
-    setTask({
-      ...task,
-      task_members: [...task.task_members, { username: user.username }]
-    })
+    if (mode === 'task') {
+      const t = current as Task
+      if (t.task_members.some(u => u.username === user.username)) return
+      setCurrent({
+        ...t,
+        task_members: [...t.task_members, { username: user.username }],
+      })
+    } else {
+      const s = current as Subtask
+      if (s.assigned_to?.includes(user.username)) return
+      setCurrent({
+        ...s,
+        assigned_to: [...(s.assigned_to || []), user.username],
+      })
+    }
     setSearchValue('')
     setFilteredUsers([])
   }
 
-  // Remove assigned user
+  // Remove user
   const handleRemove = (username: string) => {
-    setTask({
-      ...task,
-      task_members: task.task_members.filter(u => u.username !== username)
-    })
+    if (mode === 'task') {
+      const t=current as Task
+      setCurrent({
+        ...current,
+        task_members: t.task_members.filter(u => u.username !== username),
+      })
+    } else {
+      const s=current as Subtask
+      setCurrent({
+        ...current,
+        assigned_to: s.assigned_to?.filter(u => u !== username),
+      })
+    }
   }
 
-  //  Submit
+  // Submit
   const handleSubmit = async () => {
     try {
       setProcessing(true)
-      isEdit ? await updateTask(id!, task) : await createTask(task)
+      if (mode === 'task') {
+        isEdit ? await updateTask(id!, current as Task) : await createTask(current as Task)
+      } else {
+        isEdit ? await updateSubtask(id!, current as Subtask) : await createSubtask(current as Subtask)
+      }
     } finally {
       onClose?.()
     }
@@ -88,22 +130,26 @@ const CreateEditForm = ({
   return (
     <div className='bg-white rounded-lg py-4 px-8 min-w-md flex flex-col gap-4'>
       <h2 className='text-gray-900 font-bold text-2xl'>
-        {isEdit ? 'Edit Task' : 'Create New Task'}
+        {isEdit ? `Edit ${mode === 'task' ? 'Task' : 'Subtask'}` : `Create New ${mode === 'task' ? 'Task' : 'Subtask'}`}
       </h2>
 
       <Input
-        label='Title'
-        name='title'
-        value={task.title ?? ''}
-        onChange={handleChange}
-        placeholder='Enter title here'
+        label={mode === 'task' ? 'Title' : 'Subtask Title'}
+        name={mode === 'task' ? 'title' : 'sub_title'}
+        value={mode === 'task' ? (current as Task).title ?? '' : (current as Subtask).sub_title ?? ''}
+        onChange={(e) => {
+          setCurrent({ ...(current as any), [e.target.name]: e.target.value })
+        }}
+        placeholder={`Enter ${mode === 'task' ? 'task title' : 'subtask title'} here`}
       />
 
       <Input
-        label='Description'
-        name='description'
-        value={task.description ?? ''}
-        onChange={handleChange}
+        label={mode === 'task' ? 'Description' : 'Subtask Description'}
+        name={mode === 'task' ? 'description' : 'sub_description'}
+        value={mode === 'task' ? (current as Task).description ?? '' : (current as Subtask).sub_description ?? ''}
+        onChange={(e) => {
+          setCurrent({ ...current, [e.target.name]: e.target.value })
+        }}
         placeholder='Enter description here'
       />
 
@@ -112,11 +158,16 @@ const CreateEditForm = ({
         name='due_date'
         type='datetime-local'
         value={
-          task.due_date
-            ? new Date(task.due_date).toISOString().slice(0, 16)
+          ((current as Task).due_date || (current as Subtask).end_date)
+            ? new Date((current as Task).due_date || (current as Subtask).end_date!).toISOString().slice(0, 16)
             : new Date().toISOString().slice(0, 16)
         }
-        onChange={handleChange}
+        onChange={(e) => {
+          setCurrent({
+            ...current,
+            [mode === 'task' ? 'due_date' : 'end_date']: new Date(e.target.value),
+          })
+        }}
         placeholder='Enter due date'
       />
 
@@ -147,22 +198,22 @@ const CreateEditForm = ({
 
       {/* Assigned Members */}
       <p className='text-gray-900 flex gap-3 flex-wrap'>
-        {task.task_members.length === 0 ? (
-          <span className='italic text-gray-500'>
-            No members assigned yet
-          </span>
-        ) : (
-          task.task_members.map((user, index) => (
-            <span
-              key={index}
-              onClick={() => handleRemove(user.username)}
-              className='rounded-2xl px-4 py-1 bg-yellow-100 cursor-pointer hover:bg-red-200 transition'
-              title='Click to remove'
-            >
-              {user.username} ✕
-            </span>
-          ))
-        )}
+        {mode === 'task'
+          ? (current as Task).task_members?.length === 0
+            ? <span className='italic text-gray-500'>No members assigned yet</span>
+            : (current as Task).task_members.map((user, i) => (
+              <span key={i} onClick={() => handleRemove(user.username)} className='rounded-2xl px-4 py-1 bg-yellow-100 cursor-pointer hover:bg-red-200 transition'>
+                {user.username} ✕
+              </span>
+            ))
+          : (current as Subtask).assigned_to?.length === 0
+            ? <span className='italic text-gray-500'>No members assigned yet</span>
+            : (current as Subtask).assigned_to!.map((username, i) => (
+              <span key={i} onClick={() => handleRemove(username)} className='rounded-2xl px-4 py-1 bg-yellow-100 cursor-pointer hover:bg-red-200 transition'>
+                {username} ✕
+              </span>
+            ))
+        }
       </p>
 
       <button
@@ -170,7 +221,7 @@ const CreateEditForm = ({
         onClick={handleSubmit}
         className='py-2.5 px-3 rounded bg-blue-600 hover:bg-blue-700 text-white cursor-pointer disabled:opacity-55'
       >
-        {isEdit ? 'Update Task' : 'Create Task'}
+        {isEdit ? `Update ${mode === 'task' ? 'Task' : 'Subtask'}` : `Create ${mode === 'task' ? 'Task' : 'Subtask'}`}
       </button>
     </div>
   )

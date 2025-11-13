@@ -32,7 +32,7 @@ const Homepage = () => {
        
           isProcessing={isProcessing}
           setProcessing={setProcessing}
-          handleChange={handleChange}
+          
           onClose={() => {
             setProcessing(false)
             setOpened(false)
@@ -40,7 +40,7 @@ const Homepage = () => {
               title: '',
               description: '',
               due_date: new Date(),
-              assignedUsers: [],
+              task_members: [],
             })
           }}
         />

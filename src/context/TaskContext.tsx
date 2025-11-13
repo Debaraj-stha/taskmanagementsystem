@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import type { Task, User } from "../feature/task/type";
+import type { buttons, Subtask, Task, User } from "../feature/task/type";
 import apiHelper from "../utils/apiHelper";
 
 
@@ -20,10 +20,17 @@ task:Task
 setTask:(val:Task)=>void
 getUsers:()=>Promise<void>
 users:User[]
+handleFilter:(btn:string)=>void
+activeButton:buttons
+subtask:Subtask,
+setSubtask:(task:Subtask)=>void
+ createSubtask:(subtask:Subtask)=>Promise<void>,
+    updateSubtask:(id:string,subtask:Subtask)=>Promise<void>,
 }
 
 const TaskContext = createContext<TaskContextValue|null>(null)
-const staticTasks: Task []=[ {
+const staticTasks: Task []=[ 
+    {
   id: 'task-001',
   title: 'Develop Task Management Feature',
   description: 'Implement task creation, assignment, and tracking',
@@ -36,18 +43,18 @@ const staticTasks: Task []=[ {
   subtasks: [
     {
       id: 'sub-001',
-      title: 'Design UI for tasks',
-      status: 'completed',
-      task_members: [{ id: 'u2', username: 'Bob' }],
+      sub_title: 'Design UI for tasks',
+      assigned_to: ["Jhon"],
     },
     {
       id: 'sub-002',
-      title: 'Implement backend API',
-      status: 'in progress',
-      task_members: [{ id: 'u3', username: 'Carol' }],
+      sub_title: 'Implement backend API',
+      assigned_to: ['Carol' ],
     },
   ],
-}]
+},
+ 
+]
 
 
 
@@ -62,8 +69,17 @@ const TaskContextProvider = ({ children }: { children: ReactNode }) => {
      })
     const[isOpened,setOpened]=useState(false)
     const[filteredTasks,setFilteredTasks]=useState<Task[]>([])
-    const[isSuccess,setIsSuccess]=useState()
+
+
+    const [activeButton, setActiveButton] = useState<buttons>("all")
     const[message,setMessage]=useState("")
+    const[subtask,setSubtask]=useState<Subtask>({
+        sub_title:"",
+        sub_description:"",
+        start_date:new Date(),
+        end_date:new Date(),
+        parent_task:""
+    })
 
     useEffect(()=>{
 setTasks(staticTasks)
@@ -104,7 +120,11 @@ useEffect(() => {
 }, [])
 
  
-  
+   const handleFilter = (btn: string) => {
+        const filtered=[...tasks].filter((task)=>task.status===btn)
+        setFilteredTasks(filtered)
+        setActiveButton(btn as buttons)
+    }
 
     const url = import.meta.env.VITE_SERVER_URL
     const createTask = async (task:Task)=> {
@@ -183,6 +203,50 @@ useEffect(() => {
             console.log(error)
         }
     }
+const createSubtask=async(subtask:Subtask)=>{
+ try {
+            await apiHelper(`${url}/create_subtask/`, {
+                method: "POST",
+                data: subtask
+            })
+           setMessage("Subtask created succesafully")
+         
+        } catch (error:any) {
+           setMessage(error)
+           
+        }
+}
+const updateSubtask = async (id: string, subtask: Subtask) => {
+  try {
+    await apiHelper(`${url}/update_subtask/${id}/`, {
+      method: "PUT",
+      data: subtask,
+    });
+
+    // Update subtask locally in parent task’s list
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === subtask.parent_task) {
+        return {
+          ...task,
+          subtasks: task.subtasks
+            ? task.subtasks.map((st) =>
+                st.id === subtask.id ? { ...subtask } : st
+              )
+            : [subtask],
+        };
+      }
+      return task;
+    });
+
+    setTasks(updatedTasks);
+    setMessage("Subtask updated successfully");
+  } catch (error) {
+    console.error("Subtask update error:", error);
+    setMessage("Subtask update failed ");
+  }
+};
+
+
 
     useEffect(()=>{
 getUsers()
@@ -192,6 +256,8 @@ getUsers()
         <TaskContext.Provider value={{
             createTask,
             tasks,
+            createSubtask,
+            updateSubtask,
             deleteTask,
             updateTask,
             getTasks,
@@ -205,7 +271,11 @@ getUsers()
             message,
             task,
             setTask,
-            users
+            handleFilter,
+            users,
+            activeButton,
+            subtask,
+            setSubtask
 
 
         }}>

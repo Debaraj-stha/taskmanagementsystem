@@ -7,14 +7,13 @@ export interface User {
 
 export interface Subtask {
   id?: string
-  title: string
-  description?: string
-  status?: 'pending' | 'in progress' | 'completed'
+  sub_title: string
+  sub_description?: string
+  // status?: 'pending' | 'in progress' | 'completed'
   start_date?: Date
-  due_date?: Date
-
-  task_members: User[]       // users responsible for the subtask
-  assigned_names?: string[]   // optional cached names
+  end_date?: Date      // users responsible for the subtask
+  assigned_to?: string[]   // optional cached names
+  parent_task?:string
 }
 
 export interface Task {
@@ -31,3 +30,4 @@ export interface Task {
 
   subtasks?: Subtask[]        // each subtask can have its own assignees
 }
+     export type buttons = "all" | "completed" | "pending"|"in progress"

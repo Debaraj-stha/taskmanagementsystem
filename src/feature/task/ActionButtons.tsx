@@ -18,13 +18,15 @@ const ActionButtons = () => {
     try {
       setIsSubmitting(true)
       const url = import.meta.env.VITE_SERVER_URL
-      const res = await apiHelper(`${url}/create_user`, {
+      const res = await apiHelper(`${url}/create_user/`, {
         method: "POST",
         data: { username: user.username }
       })
+      setMessage("user created succesafully")
       console.log(res)
-    } catch (error) {
+    } catch (error:any) {
       console.log(error)
+      setMessage(error)
     }
     finally {
       setIsSubmitting(false)
@@ -49,6 +51,7 @@ const ActionButtons = () => {
         <Input
           name='username'
           value={user.username}
+          placeholder='Enetr username'
           label='Username'
           onChange={(e) => setUSer({ username: e.target.value })}
         />

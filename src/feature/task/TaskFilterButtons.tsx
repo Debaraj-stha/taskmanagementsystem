@@ -2,15 +2,10 @@ import { useState } from 'react'
 import { useTask } from '../../context/TaskContext'
 
 const TaskFilterButtons = () => {
-    type buttons = "all" | "completed" | "pending"|"in progress"
-    const [activeButton, setActiveButton] = useState<buttons>("all")
+
     const buttons = ["all", "completed", "pending","in progress"]
-    const{setFilteredTasks,tasks}=useTask()
-    const handleFilter = (btn: string) => {
-        const filtered=[...tasks].filter((task)=>task.status===btn)
-        setFilteredTasks(filtered)
-        setActiveButton(btn as buttons)
-    }
+    const{handleFilter,activeButton}=useTask()
+
     return (
         <div className='flex flex-row flex-wrap gap-5'>
             {
