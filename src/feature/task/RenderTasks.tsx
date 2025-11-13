@@ -64,14 +64,14 @@ const RenderTasks = () => {
     }
 
     if (parentTaskId) {
-        return <Modal onClose={() => setUpdateId(null)}>
+        return <Modal onClose={() => setParentTaskId(null)}>
             <CreateEditForm
                 mode='subtask'
                 isProcessing={isUpdating}
                 setProcessing={setUpdating}
                 id={parentTaskId}
                 onClose={() => {
-                    setUpdateId(null)
+                    setParentTaskId(null)
                     setUpdating(false)
                 }}
             />
