@@ -182,7 +182,7 @@ useEffect(() => {
     const ws = new WebSocket(wsUrl)
     webSocketRef.current = ws
 
-    ws.onopen = (ev) => {
+    ws.onopen = () => {
         console.log("connection opened")
     }
 

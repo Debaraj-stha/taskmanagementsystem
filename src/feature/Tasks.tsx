@@ -1,6 +1,5 @@
-import React from 'react'
+
 import TaskFilterButtons from './task/TaskFilterButtons'
-import type { Task } from './task/type'
 import RenderTasks from './task/RenderTasks'
 import ActionButtons from './task/ActionButtons'
 

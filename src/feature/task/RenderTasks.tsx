@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import type { Task } from './type'
 import { useTask } from '../../context/TaskContext'
 import Modal from '../../components/ui/Modal'
@@ -6,11 +6,11 @@ import CreateEditForm from './CreateEditForm'
 import PopupMessage from './PopupMessage'
 
 const RenderTasks = () => {
-    const { tasks, getTasks, deleteTask, filteredTasks, updateStatus, message, activeButton, setSubtask, subtask } = useTask()
+    const { tasks, getTasks, deleteTask, updateStatus, message, activeButton, setSubtask, subtask } = useTask()
     const [isLoading, setLoading] = useState(false)
     const [isUpdating, setUpdating] = useState(false)
     const [isDeleting, setDeleting] = useState(false)
-    const [task, setTask] = useState<Task>({ title: '', description: '', task_members: [] })
+    // const [task, setTask] = useState<Task>({ title: '', description: '', task_members: [] })
     const [updateId, setUpdateId] = useState<string | null>(null)
     const [modalOpen, setModalOpen] = useState(false)
     const [parentTaskId, setParentTaskId] = useState<string | null>(null)
@@ -24,10 +24,7 @@ const RenderTasks = () => {
         }
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
-        setTask((prev) => ({ ...prev, [name]: value }))
-    }
+ 
 
     useEffect(() => {
         (async () => {
@@ -135,7 +132,7 @@ const RenderTasks = () => {
                 disabled={isUpdating}
                 onClick={() => {
                     setUpdateId(t.id!)
-                    setTask(t)
+                    // setTask(t)
                 }}
                 className="bg-green-500 hover:bg-green-600 text-white rounded-xl px-3 py-2 disabled:opacity-50"
             >

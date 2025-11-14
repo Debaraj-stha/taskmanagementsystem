@@ -35,7 +35,7 @@ const CreateEditForm = ({
   } = useTask()
 
   const [modalOpen, setModalOpen] = useState(false)
-  const [searchValue, setSearchValue] = useState('')
+ 
   const [filteredUsers, setFilteredUsers] = useState<User[]>([])
 
   let current: Task | Subtask = mode === 'task' ? task : subtask
@@ -60,20 +60,7 @@ const CreateEditForm = ({
   }
 
   // Search users
-  const searchUsers = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setSearchValue(value)
 
-    if (!value.trim()) {
-      setFilteredUsers([])
-      return
-    }
-
-    const matched = users.filter(u =>
-      u.username.toLowerCase().includes(value.toLowerCase())
-    )
-    setFilteredUsers(matched)
-  }
 
   // Assign user
   const handleAssign = (user: User) => {
@@ -92,7 +79,7 @@ const CreateEditForm = ({
         assigned_to: [...(s.assigned_to || []), user.username],
       })
     }
-    setSearchValue('')
+
     setFilteredUsers([])
   }
 
